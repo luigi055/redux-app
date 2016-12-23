@@ -9,3 +9,7 @@ ReactDOM.render(
   <p>Boilerplate React Project</p>,
   document.getElementById('app')
 );
+
+// import './redux-example';
+import './redux-todo-example.jsx';
+

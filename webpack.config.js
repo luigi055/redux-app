@@ -5,7 +5,7 @@ module.exports = {
   entry: [
   //will use script! style! and css! to execute our loaders and transform to bundle and script! means it will produce those frameworks without bundle them
     'script!jquery/dist/jquery.min.js', 
-    'script!foundation-sites/dist/foundation.min.js',
+    'script!foundation-sites/dist/js/foundation.min.js',
     './app/app.js'
     ],
   externals: {
