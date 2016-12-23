@@ -22,17 +22,31 @@ let reducer = (state = stateDefault, action) => {
   }
 }
 
-const store = redux.createStore(reducer);
+const store = redux.createStore(reducer,
+window.__REDUX_DEVTOOLS_EXTENSION__ && 
+window.__REDUX_DEVTOOLS_EXTENSION__());
+
+// Subscribe changes
+store.subscribe(() => {
+  const state = store.getState();
+  document.getElementById('app').innerHTML = state.searchText;
+});
 
 const currentState = store.getState();
 
 console.log('Current state ', currentState);
 
-const action = {
+store.dispatch({
   type: 'CHANGE_SEARCH_TEXT',
   searchText: 'something to find'
-}
-
-store.dispatch(action);
+});
+store.dispatch({
+  type: 'CHANGE_SEARCH_TEXT',
+  searchText: 'searching for a dog'
+});
+store.dispatch({
+  type: 'CHANGE_SEARCH_TEXT',
+  searchText: 'the last thing to search'
+});
 
 console.log('searchText should be "something to find"', store.getState());

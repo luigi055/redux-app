@@ -19,7 +19,19 @@ let reducer = (state = {name: 'Anonymous'}, action) => {
   }
   return state;
 }
-const store = redux.createStore(reducer);
+// Add a second parameter to createStore for redux browser devTool
+const store = redux.createStore(reducer, 
+window.__REDUX_DEVTOOLS_EXTENSION__ && 
+window.__REDUX_DEVTOOLS_EXTENSION__());
+
+// Subscribe to changes
+// The only argument is a function that display changes in the states
+const unsubscribe = store.subscribe(() => {
+  const state = store.getState();
+  console.log('Name is', state.name);
+  document.getElementById('app').innerHTML = state.name;
+});
+// unsubscribe();
 
 // This getState method returns our object. in this case the default state is name: anonymous
 let currentState = store.getState();
@@ -36,4 +48,8 @@ store.dispatch({
   name: 'luigi'
 });
 
-console.log('Name should be luigi: ',store.getState());
+
+store.dispatch({
+  type: 'CHANGE_NAME',
+  name: 'Emily'
+});
