@@ -1,4 +1,5 @@
 import * as redux from 'redux';
+import axios from 'axios';
 
 console.log('Starting redux example');
 
@@ -17,7 +18,7 @@ const changeName = name => {
   return {
     type: 'CHANGE_NAME',
     name
-  }
+  };
 };
 
 // Hobby reducer and action generator
@@ -38,21 +39,21 @@ const hobbiesReducer = (state = [], action) => {
     default:
       return state;
   }
-}
+};
 
 const addHobby = hobby => {
   return {
     type: 'ADD_HOBBY',
     hobby
-  }
-}
+  };
+};
 
 const removeHobby = id => {
   return {
     type: 'REMOVE_HOBBY',
     id
-  }
-}
+  };
+};
 
 // Movie reducer and action generator
 //----------------------------------
@@ -73,28 +74,70 @@ const moviesReducer = (state = [], action) => {
     default:
       return state;
   }
-}
+};
 
 const addMovie = (movie, genre) => {
   return {
     type: 'ADD_MOVIE',
     movie,
     genre
-  }
-}
+  };
+};
 
 const removeMovie = id => {
   return {
     type: 'REMOVE_MOVIE',
     id
+  };
+};
+
+// Map reducer and action generator async actions
+//----------------------------------
+const mapReducer = (state = { fetching: false, url: null }, action) => {
+  switch (action.type) {
+    case 'START_LOCATION_FETCH':
+      return {
+        isFetching: true,
+        url: null
+      };
+    case 'COMPLETE_LOCATION_FETCH':
+      return {
+        isFetching: false,
+        url: action.url
+      };
+    default:
+      return state;
   }
+};
+
+const startLocationFetch = () => {
+  return {
+    type: 'START_LOCATION_FETCH'
+  };
+};
+const completeLocationFetch = url => {
+  return {
+    type: 'COMPLETE_LOCATION_FETCH',
+    url
+  };
+};
+
+const fetchLocation = () => {
+  store.dispatch(startLocationFetch());
+
+  axios.get('http://ipinfo.io').then(res => {
+    const loc = res.data.loc;
+    const baseUrl = 'http://maps.google.com?q=';
+    store.dispatch(completeLocationFetch(baseUrl + loc));
+  });
 }
 
 // Combine multiple reducer 
-var reducer = redux.combineReducers({
+const reducer = redux.combineReducers({
   name: nameReducer,
   hobbies: hobbiesReducer,
-  movies: moviesReducer
+  movies: moviesReducer,
+  map: mapReducer
 });
 
 // Add a second parameter to createStore for redux browser devTool
@@ -106,12 +149,19 @@ window.__REDUX_DEVTOOLS_EXTENSION__());
 // The only argument is a function that display changes in the states
 const unsubscribe = store.subscribe(() => {
   const state = store.getState();
-  console.log('Name is', state.name);
-  document.getElementById('app').innerHTML = state.name;
-
   console.log('new State ', store.getState());
+
+  if (state.map.isFetching) {
+    document.getElementById('app').innerHTML = 'Loading...';
+  } else if (state.map.url) {
+    document.getElementById('app').innerHTML =  
+      `<a target="_blank" href="${state.map.url}">View your Location</a>`;
+  }
+  
 });
 // unsubscribe();
+
+fetchLocation();
 
 // This getState method returns our object. in this case the default state is name: anonymous
 let currentState = store.getState();
