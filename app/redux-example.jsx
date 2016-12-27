@@ -2,65 +2,8 @@ import * as redux from 'redux';
 
 console.log('Starting redux example');
 
-// A reducer is a pure fuction that passes the state and action to a store
-// this reducer setisfies two conditions
-// 1). this reducer has a default state which the application will get started
-// 2) our reducer function returns a state even if there's no actions or if the action is not recognize 
-const defaultState = {
-  name: 'Anonymous',
-  hobbies:[],
-  movies: []
-}
-let nextHobbyId = 1;
-let nextMovieId = 1;
-let oldReducer = (state = defaultState, action) => {
-  console.log('New Action', action);
-  switch (action.type) {
-    case 'CHANGE_NAME':
-      return {
-        ...state,
-        name: action.name
-      };
-    case 'ADD_HOBBY':
-      return {
-        ...state,
-         hobbies: [
-          ...state.hobbies,
-          {
-            id: nextHobbyId++,
-            hobby: action.hobby
-          }
-        ]
-      };
-    case 'REMOVE_HOBBY':
-      return {
-        ...state,
-        //filter if something returns false will not show the item
-        hobbies: state.hobbies.filter( hobby => hobby.id !== action.id)
-      }
-    case 'ADD_MOVIE':
-      return {
-        ...state,
-        movies: [
-          ...state.movies,
-          {
-            id: nextMovieId++,
-            movie: action.movie,
-            genre: action.genre
-          }
-        ]
-      };
-    case 'REMOVE_MOVIE':
-      return {
-        ...state,
-        movies: state.movies.filter( movie => movie.id !== action.id)
-      }
-    default:
-      return state;
-  }
-  return state;
-}
-
+// Name reducer and action generator
+//----------------------------------
 const nameReducer = (state = 'Anonymouss', action) => {
     switch (action.type) {
       case 'CHANGE_NAME':
@@ -70,6 +13,16 @@ const nameReducer = (state = 'Anonymouss', action) => {
     }
 };
 
+const changeName = name => {
+  return {
+    type: 'CHANGE_NAME',
+    name
+  }
+};
+
+// Hobby reducer and action generator
+//----------------------------------
+let nextHobbyId = 1;
 const hobbiesReducer = (state = [], action) => {
   switch (action.type) {
     case 'ADD_HOBBY':
@@ -87,6 +40,23 @@ const hobbiesReducer = (state = [], action) => {
   }
 }
 
+const addHobby = hobby => {
+  return {
+    type: 'ADD_HOBBY',
+    hobby
+  }
+}
+
+const removeHobby = id => {
+  return {
+    type: 'REMOVE_HOBBY',
+    id
+  }
+}
+
+// Movie reducer and action generator
+//----------------------------------
+let nextMovieId = 1;
 const moviesReducer = (state = [], action) => {
   switch (action.type) {
     case 'ADD_MOVIE':
@@ -102,6 +72,21 @@ const moviesReducer = (state = [], action) => {
       return state.filter(movie => movie.id !== action.id);
     default:
       return state;
+  }
+}
+
+const addMovie = (movie, genre) => {
+  return {
+    type: 'ADD_MOVIE',
+    movie,
+    genre
+  }
+}
+
+const removeMovie = id => {
+  return {
+    type: 'REMOVE_MOVIE',
+    id
   }
 }
 
@@ -138,16 +123,9 @@ console.log('Current State: ', currentState);
 //   name: 'luigi'
 // }
 // dispatch method just required one property which is an action
-store.dispatch({
-  type: 'CHANGE_NAME',
-  name: 'luigi'
-});
+store.dispatch(changeName('Luigi'));
 
-store.dispatch({
-  type: 'ADD_MOVIE',
-  movie: 'The Exsorcist',
-  genre: 'Thriller'
-});
+store.dispatch(addMovie('The Exorcist', 'thriller'));
 
 store.dispatch({
   type: 'ADD_MOVIE',
@@ -155,10 +133,7 @@ store.dispatch({
   genre: 'Action, super heroes'
 });
 
-store.dispatch({
-  type: 'ADD_HOBBY',
-  hobby: 'Play guitar'
-});
+store.dispatch(addHobby('Play Guitar'));
 
 
 store.dispatch({
@@ -167,17 +142,8 @@ store.dispatch({
 });
 
 
-store.dispatch({
-  type: 'CHANGE_NAME',
-  name: 'Emily'
-});
+store.dispatch(changeName('Emily'));
 
-store.dispatch({
-  type: 'REMOVE_HOBBY',
-  id: 2
-});
+store.dispatch(removeHobby(2));
 
-store.dispatch({
-  type: 'REMOVE_MOVIE',
-  id: 1
-});
+store.dispatch(removeMovie(1));
