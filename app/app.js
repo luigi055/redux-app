@@ -10,6 +10,7 @@ require('style!css!sass!./styles/styles.scss');
 //   document.getElementById('app')
 // );
 
-// import './redux-example';
-import './redux-todo-example.jsx';
+import './redux-example';
+// import './redux-todo-example.jsx';
+
 
