@@ -13,7 +13,7 @@ const defaultState = {
 }
 let nextHobbyId = 1;
 let nextMovieId = 1;
-let reducer = (state = defaultState, action) => {
+let oldReducer = (state = defaultState, action) => {
   console.log('New Action', action);
   switch (action.type) {
     case 'CHANGE_NAME':
@@ -60,6 +60,58 @@ let reducer = (state = defaultState, action) => {
   }
   return state;
 }
+
+const nameReducer = (state = 'Anonymouss', action) => {
+    switch (action.type) {
+      case 'CHANGE_NAME':
+        return action.name;
+      default:
+        return state;
+    }
+};
+
+const hobbiesReducer = (state = [], action) => {
+  switch (action.type) {
+    case 'ADD_HOBBY':
+      return [
+        ...state,
+        {
+          id: nextHobbyId++,
+          hobby: action.hobby
+        }
+      ];
+    case 'REMOVE_HOBBY':
+      return state.filter(hobby => hobby.id !== action.id);
+    default:
+      return state;
+  }
+}
+
+const moviesReducer = (state = [], action) => {
+  switch (action.type) {
+    case 'ADD_MOVIE':
+      return [
+        ...state,
+        {
+          id: nextMovieId++,
+          movie: action.movie,
+          genre: action.genre
+        }
+      ];
+    case 'REMOVE_MOVIE':
+      return state.filter(movie => movie.id !== action.id);
+    default:
+      return state;
+  }
+}
+
+// Combine multiple reducer 
+var reducer = redux.combineReducers({
+  name: nameReducer,
+  hobbies: hobbiesReducer,
+  movies: moviesReducer
+});
+
 // Add a second parameter to createStore for redux browser devTool
 const store = redux.createStore(reducer, 
 window.__REDUX_DEVTOOLS_EXTENSION__ && 
@@ -123,9 +175,9 @@ store.dispatch({
 store.dispatch({
   type: 'REMOVE_HOBBY',
   id: 2
-})
+});
 
 store.dispatch({
   type: 'REMOVE_MOVIE',
   id: 1
-})
+});
