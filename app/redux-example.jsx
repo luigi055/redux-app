@@ -1,11 +1,13 @@
 import * as redux from 'redux';
 import * as action from './actions';
-import * as store from './store/configureStore';
+import { configure } from './store/configureStore';
+
+const store = configure();
 
 
 console.log('Starting redux example');
 
-console.log(store.configure());
+console.log(store);
 
 // Subscribe to changes
 // The only argument is a function that display changes in the states
